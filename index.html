@@ -72,7 +72,6 @@
                         if(score == brickRowCount*brickColumnCount) {
                             alert("YOU WIN, CONGRATULATIONS!");
                             document.location.reload();
-                            clearInterval(interval); 
                         }
                     }
                 }
@@ -168,7 +167,6 @@
                 if(!lives) {
                     alert("GAME OVER");
                     document.location.reload();
-                    clearInterval(interval); // Needed for Chrome to end game
                 }
                 else {
                     x = canvas.width/2;
@@ -195,9 +193,10 @@
         
         x += dx;
         y += dy;
+        requestAnimationFrame(draw);
     }
 
-    var interval = setInterval(draw, 10);
+    draw();
 </script>
 
 </body>
