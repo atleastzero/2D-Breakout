@@ -2,14 +2,18 @@
  *  Constants
  *  ======================================================== */
 
+// Canvas
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
+// Ball Info
 const ballRadius = 10;
 
+// Paddle Info
 const paddleHeight = 10;
 const paddleWidth = 75;
 
+// Brick Info
 const brickRowCount = 3;
 const brickColumnCount = 5;
 const brickWidth = 75;
@@ -18,7 +22,22 @@ const brickPadding = 10;
 const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
 
+// Bricks
 const bricks = [];
+
+// Messages
+const WIN_MESSAGE = 'YOU WIN, CONGRATULATIONS!';
+const LOSE_MESSAGE = 'GAME OVER';
+
+// Controls
+const RIGHT = 'Right';
+const LEFT = 'Left';
+const RIGHT_ARROW = 'ArrowRight';
+const LEFT_ARROW = 'ArrowLeft';
+
+// Style
+const FONT = '16px Arial';
+const COLOR = '#0095DD';
 
 /*  ========================================================
  *  Variables
@@ -72,7 +91,7 @@ function collisionDetection() {
           b.status = 0;
           score += 1;
           if (score === brickRowCount * brickColumnCount) {
-            alert('YOU WIN, CONGRATULATIONS!');
+            alert(WIN_MESSAGE);
             document.location.reload();
           }
         }
@@ -82,29 +101,29 @@ function collisionDetection() {
 }
 
 function drawScore() {
-  ctx.font = '16px Arial';
-  ctx.fillStyle = '#0095DD';
+  ctx.font = FONT;
+  ctx.fillStyle = COLOR;
   ctx.fillText(`Score: ${score}`, 8, 20);
 }
 
 function drawLives() {
-  ctx.font = '16px Arial';
-  ctx.fillStyle = '#0095DD';
+  ctx.font = FONT;
+  ctx.fillStyle = COLOR;
   ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
 }
 
 function keyDownHandler(e) {
-  if (e.key === 'Right' || e.key === 'ArrowRight') {
+  if (e.key === RIGHT || e.key === RIGHT_ARROW) {
     rightPressed = true;
-  } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+  } else if (e.key === LEFT || e.key === LEFT_ARROW) {
     leftPressed = true;
   }
 }
 
 function keyUpHandler(e) {
-  if (e.key === 'Right' || e.key === 'ArrowRight') {
+  if (e.key === RIGHT || e.key === RIGHT_ARROW) {
     rightPressed = false;
-  } else if (e.key === 'Left' || e.key === 'ArrowLeft') {
+  } else if (e.key === LEFT || e.key === LEFT_ARROW) {
     leftPressed = false;
   }
 }
@@ -112,7 +131,7 @@ function keyUpHandler(e) {
 function drawBall() {
   ctx.beginPath();
   ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-  ctx.fillStyle = '#0095DD';
+  ctx.fillStyle = COLOR;
   ctx.fill();
   ctx.closePath();
 }
@@ -120,7 +139,7 @@ function drawBall() {
 function drawPaddle() {
   ctx.beginPath();
   ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-  ctx.fillStyle = '#0095DD';
+  ctx.fillStyle = COLOR;
   ctx.fill();
   ctx.closePath();
 }
@@ -135,7 +154,7 @@ function drawBricks() {
         bricks[c][r].y = brickY;
         ctx.beginPath();
         ctx.rect(brickX, brickY, brickWidth, brickHeight);
-        ctx.fillStyle = '#0095DD';
+        ctx.fillStyle = COLOR;
         ctx.fill();
         ctx.closePath();
       }
@@ -164,7 +183,7 @@ function draw() {
     } else {
       lives -= 1;
       if (!lives) {
-        alert('GAME OVER');
+        alert(LOSE_MESSAGE);
         document.location.reload();
       } else {
         x = canvas.width / 2;
