@@ -37,7 +37,11 @@ const LEFT_ARROW = 'ArrowLeft';
 
 // Style
 const FONT = '16px Arial';
-const COLOR = '#0095DD';
+const BLUE = '#0095DD';
+// Brick Style
+const RED = 'red';
+const YELLOW = 'yellow';
+const GREEN = 'green';
 
 /*  ========================================================
  *  Variables
@@ -65,7 +69,9 @@ function setUpBricks() {
   for (let c = 0; c < brickColumnCount; c += 1) {
     bricks[c] = [];
     for (let r = 0; r < brickRowCount; r += 1) {
-      bricks[c][r] = { x: 0, y: 0, status: 1 };
+      const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+      const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+      bricks[c][r] = { x: brickX, y: brickY, status: 3 };
     }
   }
 }
@@ -110,7 +116,7 @@ function collisionDetection() {
   for (let c = 0; c < brickColumnCount; c += 1) {
     for (let r = 0; r < brickRowCount; r += 1) {
       const b = bricks[c][r];
-      if (b.status === 1) {
+      if (b.status > 0) {
         if (
           x > b.x
           && x < b.x + brickWidth
@@ -118,9 +124,9 @@ function collisionDetection() {
           && y < b.y + brickHeight
         ) {
           dy = -dy;
-          b.status = 0;
+          b.status -= 1;
           score += 1;
-          if (score === brickRowCount * brickColumnCount) {
+          if (score === brickRowCount * brickColumnCount * 3) {
             win();
           }
         }
@@ -178,20 +184,20 @@ function moveBall() {
 // Draw
 function drawScore() {
   ctx.font = FONT;
-  ctx.fillStyle = COLOR;
+  ctx.fillStyle = BLUE;
   ctx.fillText(`Score: ${score}`, 8, 20);
 }
 
 function drawLives() {
   ctx.font = FONT;
-  ctx.fillStyle = COLOR;
+  ctx.fillStyle = BLUE;
   ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
 }
 
 function drawBall() {
   ctx.beginPath();
   ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-  ctx.fillStyle = COLOR;
+  ctx.fillStyle = BLUE;
   ctx.fill();
   ctx.closePath();
 }
@@ -199,7 +205,7 @@ function drawBall() {
 function drawPaddle() {
   ctx.beginPath();
   ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-  ctx.fillStyle = COLOR;
+  ctx.fillStyle = BLUE;
   ctx.fill();
   ctx.closePath();
 }
@@ -207,14 +213,16 @@ function drawPaddle() {
 function drawBricks() {
   for (let c = 0; c < brickColumnCount; c += 1) {
     for (let r = 0; r < brickRowCount; r += 1) {
-      if (bricks[c][r].status === 1) {
-        const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
-        const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
-        bricks[c][r].x = brickX;
-        bricks[c][r].y = brickY;
+      if (bricks[c][r].status > 0) {
         ctx.beginPath();
-        ctx.rect(brickX, brickY, brickWidth, brickHeight);
-        ctx.fillStyle = COLOR;
+        ctx.rect(bricks[c][r].x, bricks[c][r].y, brickWidth, brickHeight);
+        if (bricks[c][r].status === 3) {
+          ctx.fillStyle = RED;
+        } else if (bricks[c][r].status === 2) {
+          ctx.fillStyle = YELLOW;
+        } else {
+          ctx.fillStyle = GREEN;
+        }
         ctx.fill();
         ctx.closePath();
       }
