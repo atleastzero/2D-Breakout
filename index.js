@@ -1,18 +1,14 @@
+/*  ========================================================
+ *  Constants
+ *  ======================================================== */
+
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
-let x = canvas.width / 2;
-let y = canvas.height - 30;
-let dx = 2;
-let dy = -2;
 const ballRadius = 10;
 
 const paddleHeight = 10;
 const paddleWidth = 75;
-let paddleX = (canvas.width - paddleWidth) / 2;
-
-let rightPressed = false;
-let leftPressed = false;
 
 const brickRowCount = 3;
 const brickColumnCount = 5;
@@ -23,16 +19,36 @@ const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
 
 const bricks = [];
-for (let c = 0; c < brickColumnCount; c += 1) {
-  bricks[c] = [];
-  for (let r = 0; r < brickRowCount; r += 1) {
-    bricks[c][r] = { x: 0, y: 0, status: 1 };
-  }
-}
+
+/*  ========================================================
+ *  Variables
+ *  ======================================================== */
+
+let x = canvas.width / 2;
+let y = canvas.height - 30;
+let dx = 2;
+let dy = -2;
+let paddleX = (canvas.width - paddleWidth) / 2;
+
+let rightPressed = false;
+let leftPressed = false;
 
 let score = 0;
 
 let lives = 3;
+
+/*  ========================================================
+ *  Functions
+ *  ======================================================== */
+
+function setUpBricks() {
+  for (let c = 0; c < brickColumnCount; c += 1) {
+    bricks[c] = [];
+    for (let r = 0; r < brickRowCount; r += 1) {
+      bricks[c][r] = { x: 0, y: 0, status: 1 };
+    }
+  }
+}
 
 function mouseMoveHandler(e) {
   const relativeX = e.clientX - canvas.offsetLeft;
@@ -176,6 +192,12 @@ function draw() {
   y += dy;
   requestAnimationFrame(draw);
 }
+
+/*  ========================================================
+ *  Initializations
+ *  ======================================================== */
+
+setUpBricks();
 
 document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
