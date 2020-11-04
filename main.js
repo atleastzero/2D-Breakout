@@ -5,3 +5,4 @@ ctx.save();
 
 // Default export ONLY ONE!
 export default ctx;
+export { canvas };
