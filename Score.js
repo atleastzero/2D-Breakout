@@ -4,7 +4,7 @@ import Sprite from './Sprite';
 
 class Score extends Sprite {
   constructor(font, color) {
-    super(canvas.width - 65, 20);
+    super(8, 20);
     this.font = font;
     this.color = color;
     this.total = 0;
