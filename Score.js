@@ -1,4 +1,4 @@
-import ctx, { canvas } from './main';
+import ctx from './main';
 
 import Sprite from './Sprite';
 
