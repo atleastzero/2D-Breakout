@@ -1,10 +1,21 @@
+/* eslint-disable comma-dangle */
+/* eslint-disable no-alert */
+/* eslint-disable import/extensions */
+
+/*  ========================================================
+ *  Imports
+ *  ======================================================== */
+
+import ctx, { canvas } from './main.js';
+import Ball from './Sprites/Ball.js';
+import Brick from './Sprites/Brick.js';
+import Lives from './Sprites/Lives.js';
+import Paddle from './Sprites/Paddle.js';
+import Score from './Sprites/Score.js';
+
 /*  ========================================================
  *  Constants
  *  ======================================================== */
-
-// DOM References
-const canvas = document.getElementById('myCanvas');
-const ctx = canvas.getContext('2d');
 
 // Ball Info
 const ballRadius = 10;
@@ -21,9 +32,6 @@ const brickHeight = 20;
 const brickPadding = 10;
 const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
-
-// Bricks
-const bricks = [];
 
 // Messages
 const WIN_MESSAGE = 'YOU WIN, CONGRATULATIONS!';
@@ -43,22 +51,34 @@ const RED = 'red';
 const YELLOW = 'yellow';
 const GREEN = 'green';
 
+// Bricks
+const bricks = [];
+
+// Ball
+const ball = new Ball(ballRadius, BLUE, canvas.width / 2, canvas.height - 30);
+
+// Paddle
+const paddle = new Paddle(
+  paddleWidth,
+  paddleHeight,
+  BLUE,
+  (canvas.width - paddleWidth) / 2,
+  (canvas.height - paddleHeight)
+);
+
+// Text
+const lives = new Lives(FONT, BLUE);
+const score = new Score(FONT, BLUE);
+
 /*  ========================================================
  *  Variables
  *  ======================================================== */
 
-let x = canvas.width / 2;
-let y = canvas.height - 30;
 let dx = 2;
 let dy = -2;
-let paddleX = (canvas.width - paddleWidth) / 2;
 
 let rightPressed = false;
 let leftPressed = false;
-
-let score = 0;
-
-let lives = 3;
 
 /*  ========================================================
  *  Functions
@@ -71,7 +91,7 @@ function setUpBricks() {
     for (let r = 0; r < brickRowCount; r += 1) {
       const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
       const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
-      bricks[c][r] = { x: brickX, y: brickY, status: 3 };
+      bricks[c][r] = new Brick(brickWidth, brickHeight, RED, YELLOW, GREEN, brickX, brickY);
     }
   }
 }
@@ -80,7 +100,7 @@ function setUpBricks() {
 function mouseMoveHandler(e) {
   const relativeX = e.clientX - canvas.offsetLeft;
   if (relativeX > 0 && relativeX < canvas.width) {
-    paddleX = relativeX - paddleWidth / 2;
+    paddle.x = relativeX - paddleWidth / 2;
   }
 }
 
@@ -118,14 +138,14 @@ function collisionDetection() {
       const b = bricks[c][r];
       if (b.status > 0) {
         if (
-          x > b.x
-          && x < b.x + brickWidth
-          && y > b.y
-          && y < b.y + brickHeight
+          ball.x > b.x
+          && ball.x < b.x + brickWidth
+          && ball.y > b.y
+          && ball.y < b.y + brickHeight
         ) {
           dy = -dy;
           b.status -= 1;
-          score += 1;
+          score.increment();
           if (score === brickRowCount * brickColumnCount * 3) {
             win();
           }
@@ -136,27 +156,27 @@ function collisionDetection() {
 }
 
 function checkWallCollision() {
-  if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+  if (ball.x + dx > canvas.width - ballRadius || ball.x + dx < ballRadius) {
     dx = -dx;
   }
 }
 
 function checkCeilFloorCollision() {
-  if (y + dy < ballRadius) {
+  if (ball.y + dy < ballRadius) {
     dy = -dy;
-  } else if (y + dy > canvas.height - ballRadius) {
-    if (x > paddleX && x < paddleX + paddleWidth) {
+  } else if (ball.y + dy > canvas.height - ballRadius) {
+    if (ball.x > paddle.x && ball.x < paddle.x + paddleWidth) {
       dy = -dy;
     } else {
-      lives -= 1;
-      if (!lives) {
+      lives.decrement();
+      if (!lives.left) {
         lose();
       } else {
-        x = canvas.width / 2;
-        y = canvas.height - 30;
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height - 30;
         dx = 2;
         dy = -2;
-        paddleX = (canvas.width - paddleWidth) / 2;
+        paddle.x = (canvas.width - paddleWidth) / 2;
       }
     }
   }
@@ -164,47 +184,27 @@ function checkCeilFloorCollision() {
 
 function checkMove() {
   if (rightPressed) {
-    paddleX += 7;
-    if (paddleX + paddleWidth > canvas.width) {
-      paddleX = canvas.width - paddleWidth;
+    paddle.x += 7;
+    if (paddle.x + paddleWidth > canvas.width) {
+      paddle.x = canvas.width - paddleWidth;
     }
   } else if (leftPressed) {
-    paddleX -= 7;
-    if (paddleX < 0) {
-      paddleX = 0;
+    paddle.x -= 7;
+    if (paddle.x < 0) {
+      paddle.x = 0;
     }
   }
 }
 
 function moveBall() {
-  x += dx;
-  y += dy;
+  ball.x += dx;
+  ball.y += dy;
 }
 
 // Draw
-function drawScore() {
-  ctx.font = FONT;
-  ctx.fillStyle = BLUE;
-  ctx.fillText(`Score: ${score}`, 8, 20);
-}
-
-function drawLives() {
-  ctx.font = FONT;
-  ctx.fillStyle = BLUE;
-  ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
-}
-
-function drawBall() {
-  ctx.beginPath();
-  ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-  ctx.fillStyle = BLUE;
-  ctx.fill();
-  ctx.closePath();
-}
-
 function drawPaddle() {
   ctx.beginPath();
-  ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+  ctx.rect(paddle.x, canvas.height - paddleHeight, paddleWidth, paddleHeight);
   ctx.fillStyle = BLUE;
   ctx.fill();
   ctx.closePath();
@@ -213,19 +213,7 @@ function drawPaddle() {
 function drawBricks() {
   for (let c = 0; c < brickColumnCount; c += 1) {
     for (let r = 0; r < brickRowCount; r += 1) {
-      if (bricks[c][r].status > 0) {
-        ctx.beginPath();
-        ctx.rect(bricks[c][r].x, bricks[c][r].y, brickWidth, brickHeight);
-        if (bricks[c][r].status === 3) {
-          ctx.fillStyle = RED;
-        } else if (bricks[c][r].status === 2) {
-          ctx.fillStyle = YELLOW;
-        } else {
-          ctx.fillStyle = GREEN;
-        }
-        ctx.fill();
-        ctx.closePath();
-      }
+      bricks[c][r].render();
     }
   }
 }
@@ -233,11 +221,11 @@ function drawBricks() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBricks();
-  drawBall();
+  ball.render();
   drawPaddle();
   collisionDetection();
-  drawScore();
-  drawLives();
+  score.render();
+  lives.render();
 
   checkWallCollision();
   checkCeilFloorCollision();

@@ -1,6 +1,8 @@
-import ctx from './main';
+/* eslint-disable import/extensions */
 
-import Sprite from './Sprite';
+import ctx from '../main.js';
+
+import Sprite from './Sprite.js';
 
 class Ball extends Sprite {
   constructor(radius, color, x, y) {

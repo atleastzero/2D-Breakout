@@ -1,6 +1,8 @@
-import ctx from './main';
+/* eslint-disable import/extensions */
 
-import Sprite from './Sprite';
+import ctx from '../main.js';
+
+import Sprite from './Sprite.js';
 
 class Brick extends Sprite {
   constructor(width, height, threeColor, twoColor, oneColor, x, y) {

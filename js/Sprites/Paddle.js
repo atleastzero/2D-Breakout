@@ -1,6 +1,8 @@
-import ctx, { canvas } from './main';
+/* eslint-disable import/extensions */
 
-import Sprite from './Sprite';
+import ctx, { canvas } from '../main.js';
+
+import Sprite from './Sprite.js';
 
 class Paddle extends Sprite {
   constructor(width, height, color, x, y) {

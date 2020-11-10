@@ -1,6 +1,8 @@
-import ctx from './main';
+/* eslint-disable import/extensions */
 
-import Sprite from './Sprite';
+import ctx from '../main.js';
+
+import Sprite from './Sprite.js';
 
 class Score extends Sprite {
   constructor(font, color) {
@@ -8,6 +10,10 @@ class Score extends Sprite {
     this.font = font;
     this.color = color;
     this.total = 0;
+  }
+
+  increment(points = 1) {
+    this.total += points;
   }
 
   render() {
